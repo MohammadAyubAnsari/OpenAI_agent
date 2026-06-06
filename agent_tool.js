@@ -16,10 +16,46 @@ const getWeatherTool = tool({
   },
 });
 
+const sendEmailTool = tool({
+  name: "send_email",
+  description: "This tool sends an email ",
+  parameters: z.object({
+    email: z.string().describe("The email address to send the email to"),
+    subject: z.string().describe("The subject of the email"),
+    body: z.string().describe("The body of the email"),
+  }),
+  execute: async ({ email, subject, body }) => {
+    try {
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      const info = await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject,
+        text: body,
+      });
+
+      return `Email sent successfully to ${email}. Message ID: ${info.messageId}`;
+    } catch (error) {
+      console.error(error);
+
+      return `Failed to send email to ${email}: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`;
+    }
+  },
+});
+
 const agent = new Agent({
   name: "Weather Agent",
-  instructions: `You are an expert weather agent that helps user to tell weather report.`,
-  tools: [getWeatherTool],
+  instructions: `You are an expert weather agent that helps user to tell weather report.and also send mail`,
+  tools: [getWeatherTool, sendEmailTool],
 });
 
 async function main(query = "") {
