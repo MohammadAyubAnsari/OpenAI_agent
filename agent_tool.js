@@ -4,6 +4,12 @@ import { z } from "zod";
 import axios from "axios";
 import nodemailer from "nodemailer";
 
+const getWeatherSchema = z.object({
+  city: z.string().describe("The name of the city to get the weather for"),
+  degree_c: z.number().describe("The temperature in degree Celsius"),
+  condition: z.string().optional().describe("The weather condition"),
+});
+
 const getWeatherTool = tool({
   name: "get_weather",
   description: "returns the current weather information for the given city",
@@ -57,13 +63,20 @@ const agent = new Agent({
   name: "Weather Agent",
   instructions: `You are an expert weather agent that helps user to tell weather report and send the received report in mail.`,
   tools: [getWeatherTool, sendEmailTool],
+  outputType: getWeatherSchema,
 });
 
 async function main(query = "") {
   const result = await run(agent, query);
-  console.log(`Result:`, result.finalOutput);
+  console.log(
+    `Result:`,
+    result.finalOutput,
+    // result.finalOutput.city,
+    // result.finalOutput.degree_c,
+    // result.finalOutput.condition,
+  );
 }
 
 main(
-  `What is the weather of Cuttack, KEndrapara,Kashmir and send the email to mdayubansari2014@gmail.com`,
+  `What is the weather of Cuttack and send the email to mdayubansari2014@gmail.com`,
 );
