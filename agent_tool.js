@@ -2,6 +2,7 @@ import "dotenv/config";
 import { Agent, run, tool } from "@openai/agents";
 import { z } from "zod";
 import axios from "axios";
+import nodemailer from "nodemailer";
 
 const getWeatherTool = tool({
   name: "get_weather",
@@ -54,7 +55,7 @@ const sendEmailTool = tool({
 
 const agent = new Agent({
   name: "Weather Agent",
-  instructions: `You are an expert weather agent that helps user to tell weather report.and also send mail`,
+  instructions: `You are an expert weather agent that helps user to tell weather report and send the received report in mail.`,
   tools: [getWeatherTool, sendEmailTool],
 });
 
@@ -63,4 +64,6 @@ async function main(query = "") {
   console.log(`Result:`, result.finalOutput);
 }
 
-main(`What is the weather of Cuttack, KEndrapara,Kashmir`);
+main(
+  `What is the weather of Cuttack, KEndrapara,Kashmir and send the email to mdayubansari2014@gmail.com`,
+);
