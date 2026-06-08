@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { Agent, run, tool } from "@openai/agents";
+import { RECOMMENDED_PROMPT_PREFIX } from "@openai/agents-core/extensions";
 import { z } from "zod";
 import fs from "node:fs/promises";
 
@@ -44,7 +45,7 @@ const fetchAvailablePlans = tool({
 const sales_agent = new Agent({
   name: "sales_agent",
   instructions:
-    "You are an expert sales agent for an internet broadband company.Talk to the user and help them with what they need.",
+    "{RECOMMENDED_PROMPT_PREFIX}You are an expert sales agent for an internet broadband company.Talk to the user and help them with what they need.",
   tools: [
     fetchAvailablePlans,
     refundAgent.asTool({
@@ -71,5 +72,5 @@ async function main(query = "") {
 }
 
 main(
-  "Hey there,I am customer having id 678 and I want a refund because I am shifting.",
+  "Hey there,I am customer having id 2390 and I want a refund because internet speed is slow.",
 );
