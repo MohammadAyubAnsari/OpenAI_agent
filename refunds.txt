@@ -1,1 +1,2 @@
 Refund for Customer having ID 123 for Customer requested refund for plan 399 due to shifting to a new place.
+Refund for Customer having ID 678 for Customer is shifting.

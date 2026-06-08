@@ -71,5 +71,5 @@ async function main(query = "") {
 }
 
 main(
-  "Hey there, Can you tell me what plan is best for me? Show me all the available plans.",
+  "Hey there,I am customer having id 678 and I want a refund because I am shifting.",
 );
