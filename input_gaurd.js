@@ -36,8 +36,14 @@ const mathsAgent = new Agent({
 });
 
 async function main(q = "") {
-  const result = await run(mathsAgent, q);
-  console.log("Result :", result.finalOutput);
+  try {
+    const result = await run(mathsAgent, q);
+    console.log("Result :", result.finalOutput);
+  } catch (e) {
+    if (e instanceof InputGuardrailTripwireTriggered) {
+      console.log(`Invalid Input: Rejected because ${e.message}`);
+    }
+  }
 }
 
 main("write a code to add two numbers");
