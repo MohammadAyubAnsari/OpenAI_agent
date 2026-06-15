@@ -4,12 +4,16 @@ import { z } from "zod";
 
 const mathInputAgent = new Agent({
   name: "Maths query checker",
-  instructions:
-    "You are an input guardrail agent that checks if the query is a math question ot not.",
+  instructions: `You are an input guardrail agent that checks if the query is a math question ot not.
+  Rules:
+  - The question has to be strictly a maths equation only.
+  - Reject any other kind of request even if related to maths.
+  `,
   outputType: z.object({
     isValidMathsQuestion: z
       .boolean()
       .describe("if the question is a maths question?"),
+    reason: z.string().optional().describe("reason for rejection"),
   }),
 });
 
@@ -19,6 +23,7 @@ const mathInputGuardrail = {
     console.log(`TODO:We need to validate ${input}`);
     const result = await run(mathInputAgent, input);
     return {
+      outputInfo: result.finalOutput.reason,
       tripwireTriggered: !result.finalOutput.isValidMathsQuestion,
     };
   },
@@ -35,4 +40,4 @@ async function main(q = "") {
   console.log("Result :", result.finalOutput);
 }
 
-main("write a poem to my crush ");
+main("what is 2+10*13//2");
