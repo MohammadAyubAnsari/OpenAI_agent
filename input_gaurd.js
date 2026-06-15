@@ -46,4 +46,4 @@ async function main(q = "") {
   }
 }
 
-main("write a code to add two numbers");
+main("2+2");
