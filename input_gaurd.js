@@ -40,4 +40,4 @@ async function main(q = "") {
   console.log("Result :", result.finalOutput);
 }
 
-main("what is 2+10*13//2");
+main("write a code to add two numbers");
