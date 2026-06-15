@@ -1,12 +1,25 @@
 import "dotenv/config";
-import { Agent, run } from "@openai/agents";
+import { Agent, run, InputGuardrailTripwireTriggered } from "@openai/agents";
+import { z } from "zod";
+
+const mathInputAgent = new Agent({
+  name: "Maths query checker",
+  instructions:
+    "You are an input guardrail agent that checks if the query is a math question ot not.",
+  outputType: z.object({
+    isValidMathsQuestion: z
+      .boolean()
+      .describe("if the question is a maths question?"),
+  }),
+});
 
 const mathInputGuardrail = {
   name: "Math Homework Guardrail",
-  execute: ({ input }) => {
+  execute: async ({ input }) => {
     console.log(`TODO:We need to validate ${input}`);
+    const result = await run(mathInputAgent, input);
     return {
-      tripwireTriggered: false,
+      tripwireTriggered: !result.finalOutput.isValidMathsQuestion,
     };
   },
 };
@@ -22,4 +35,4 @@ async function main(q = "") {
   console.log("Result :", result.finalOutput);
 }
 
-main("write a code in javascript to add two numbers");
+main("write a poem to my crush ");
