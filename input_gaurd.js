@@ -1,12 +1,12 @@
 import "dotenv/config";
 import { Agent, run } from "@openai/agents";
 
-const mathInputGaurdrail = {
-  name: "Math Homework Gaurdrail",
+const mathInputGuardrail = {
+  name: "Math Homework Guardrail",
   execute: ({ input }) => {
     console.log(`TODO:We need to validate ${input}`);
     return {
-      tripwireTriggered: true,
+      tripwireTriggered: false,
     };
   },
 };
@@ -14,7 +14,7 @@ const mathInputGaurdrail = {
 const mathsAgent = new Agent({
   name: "Maths Agent",
   instructions: "You are an expert maths ai agent.",
-  inputGaurdrails: [mathInputGaurdrail],
+  inputGuardrails: [mathInputGuardrail],
 });
 
 async function main(q = "") {
