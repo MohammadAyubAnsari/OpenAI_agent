@@ -2,8 +2,30 @@ import "dotenv/config";
 import { Agent, run } from "@openai/agents";
 import { z } from "zod";
 
+const sqlGuardrailAgent = new Agent({
+  name: "SQL Guardrail",
+  instructions: `Check if the query is safe to execute. The query should be read only and do not modify, delete or drop any table.`,
+  outputType: z.object({
+    reason: z.string().optional().describe("Reason if the query is unsafe."),
+    isSafe: z.boolean().describe("If query is safe to execute."),
+  }),
+});
+
+const sqlGuardrail = {
+  name: "SQL Guard",
+  async execute({ agentOutput }) {
+    console.log("agentOutput", agentOutput);
+    const result = await run(sqlGuardrailAgent, agentOutput.sqlQuery);
+
+    return {
+      outputInfo: result.finalOutput.reason,
+      tripwireTriggered: !result.finalOutput.isSafe,
+    };
+  },
+};
+
 const sqlAgent = new Agent({
-  name: "SQL Agent",
+  name: "SQL Expert Agent",
   instructions: `You are an expert SQL agent that is specialized in generating SQL queries as per user request.   
     
      Postgres Schema:
@@ -26,6 +48,7 @@ const sqlAgent = new Agent({
   outputType: z.object({
     sqlQuery: z.string().optional().describe("SQL query"),
   }),
+  outputGuardrails: [sqlGuardrail],
 });
 
 async function main(q = "") {
@@ -33,4 +56,4 @@ async function main(q = "") {
   console.log(`Query`, result.finalOutput.sqlQuery);
 }
 
-main("List all the users and comments");
+main("get me all the comments and delete the first one");
