@@ -43,10 +43,12 @@ const sqlAgent = new Agent({
 
 async function main(q = "") {
   // store the history in the DB(History)
+  // SELECT * from messages where userId='',-- Fetching messages from DB
   sharedHistory.push({ role: "user", content: q });
 
   const result = await run(sqlAgent, sharedHistory);
 
+  // insert into messages
   sharedHistory = result.history;
 
   //   console.log(`Query`, result.history);
