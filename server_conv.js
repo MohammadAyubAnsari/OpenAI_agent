@@ -2,8 +2,6 @@ import "dotenv/config";
 import { Agent, run, tool } from "@openai/agents";
 import { z } from "zod";
 
-let sharedHistory = [];
-
 const executeSQL = tool({
   name: "execute_sql",
   description: "This executes the SQL Query",
@@ -42,17 +40,12 @@ const sqlAgent = new Agent({
 });
 
 async function main(q = "") {
-  // store the history in the DB(History)
-  sharedHistory.push({ role: "user", content: q });
-
-  const result = await run(sqlAgent, sharedHistory);
-
-  sharedHistory = result.history;
+  const result = await run(sqlAgent, q, {
+    conversationId: "conv_123",
+  });
 
   //   console.log(`Query`, result.history);
   console.log(`Query`, result.finalOutput);
 }
 
-main("Hi My name is Ayub").then(() => {
-  main("Get me all the users with my name");
-});
+main("write a query to get all users with my name ");
